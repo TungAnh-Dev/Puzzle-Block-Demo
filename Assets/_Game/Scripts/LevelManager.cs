@@ -33,6 +33,7 @@ public class LevelManager : MonoBehaviour
         Application.targetFrameRate = 60;
         resetBlock                     =  0;
         blockDragHandler.OnBlockPlaced += OnBlockPlacedHandle;
+        placementLogic.Init();
         blockSystem.Generate3Blocks();
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,18 @@ public class GridPlacementLogic : BlockPlacementLogic
     [SerializeField] private Transform previewHolder;
 
     private readonly List<BrickObj> ghostBricks = new();
+    
+    private Vector2Int[] allCells;
+
+    public override void Init()
+    {
+        allCells = new Vector2Int[GridDataSystem.Size * GridDataSystem.Size];
+        int i = 0;
+
+        for (int x = 0; x < GridDataSystem.Size; x++)
+        for (int y = 0; y < GridDataSystem.Size; y++)
+            allCells[i++] = new Vector2Int(x, y);
+    }
 
     public override void PreviewBlock(BlockObj block)
     {
@@ -185,7 +198,7 @@ public class GridPlacementLogic : BlockPlacementLogic
 
     public override bool CanPlaceBlockAnywhere(BlockObj block)
     {
-        foreach (var cell in GetAllGridCells())
+        foreach (var cell in allCells)
         {
             if (CanPlaceBlockAt(block, cell))
                 return true;
@@ -212,16 +225,9 @@ public class GridPlacementLogic : BlockPlacementLogic
         return true;
     }
     
-    private IEnumerable<Vector2Int> GetAllGridCells()
-    {
-        for (int x = 0; x < GridDataSystem.Size; x++)
-        for (int y = 0; y < GridDataSystem.Size; y++)
-            yield return new Vector2Int(x, y);
-    }
-    
     public bool CanPlaceShapeAnywhere(BlockShape shape)
     {
-        foreach (var origin in GetAllGridCells())
+        foreach (var origin in allCells)
         {
             if (CanPlaceShapeAt(shape, origin))
                 return true;
@@ -248,7 +254,7 @@ public class GridPlacementLogic : BlockPlacementLogic
     
     public bool CanClearLineAnywhere(BlockShape shape)
     {
-        foreach (var origin in GetAllGridCells())
+        foreach (var origin in allCells)
         {
             if (!CanPlaceShapeAt(shape, origin))
                 continue;
@@ -262,44 +268,30 @@ public class GridPlacementLogic : BlockPlacementLogic
     
     private bool WillClearLine(BlockShape shape, Vector2Int origin)
     {
-        HashSet<Vector2Int> tempOccupied = new();
-
+        Span<int> rowCount = stackalloc int[GridDataSystem.Size];
+        Span<int> colCount = stackalloc int[GridDataSystem.Size];
+        
         for (int x = 0; x < GridDataSystem.Size; x++)
         for (int y = 0; y < GridDataSystem.Size; y++)
             if (grid.IsOccupied(new Vector2Int(x, y)))
-                tempOccupied.Add(new Vector2Int(x, y));
+            {
+                rowCount[y]++;
+                colCount[x]++;
+            }
 
         foreach (var offset in shape.Cells)
-            tempOccupied.Add(origin + offset);
-
-        // check row
-        for (int y = 0; y < GridDataSystem.Size; y++)
         {
-            bool full = true;
-            for (int x = 0; x < GridDataSystem.Size; x++)
-            {
-                if (!tempOccupied.Contains(new Vector2Int(x, y)))
-                {
-                    full = false;
-                    break;
-                }
-            }
-            if (full) return true;
+            Vector2Int c = origin + offset;
+            rowCount[c.y]++;
+            colCount[c.x]++;
         }
 
-        // check column
-        for (int x = 0; x < GridDataSystem.Size; x++)
+        for (int i = 0; i < GridDataSystem.Size; i++)
         {
-            bool full = true;
-            for (int y = 0; y < GridDataSystem.Size; y++)
-            {
-                if (!tempOccupied.Contains(new Vector2Int(x, y)))
-                {
-                    full = false;
-                    break;
-                }
-            }
-            if (full) return true;
+            if (rowCount[i] == GridDataSystem.Size)
+                return true;
+            if (colCount[i] == GridDataSystem.Size)
+                return true;
         }
 
         return false;
