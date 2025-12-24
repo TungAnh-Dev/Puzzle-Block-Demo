@@ -101,6 +101,7 @@ public class GridPlacementLogic : BlockPlacementLogic
             brick.gameObject.SetActive(true);
             brick.transform.SetParent(brickHolder);
             brick.transform.position = grid.GridToWorld(cell);
+            brick.transform.localScale = Vector3.one;
 
             brick.SetSprite(sprite);
             brick.SetBrick(BrickObj.BrickType.Occupied);
@@ -109,19 +110,21 @@ public class GridPlacementLogic : BlockPlacementLogic
         }
 
         ClearPreview();
-        ClearCol();
-        ClearRow();
+        ClearLines();
         return true;
     }
 
-    private void ClearCol()
+    private void ClearLines()
     {
-        for (int x = 0; x < GridDataSystem.Size; x++)
+        HashSet<Vector2Int> cellsToClear = new();
+
+        // ===== SCAN ROW =====
+        for (int y = 0; y < GridDataSystem.Size; y++)
         {
             bool full = true;
-            for (int y = 0; y < GridDataSystem.Size; y++)
+            for (int x = 0; x < GridDataSystem.Size; x++)
             {
-                if (!this.grid.IsOccupied(new Vector2Int(x, y)))
+                if (!grid.IsOccupied(new Vector2Int(x, y)))
                 {
                     full = false;
                     break;
@@ -129,25 +132,37 @@ public class GridPlacementLogic : BlockPlacementLogic
             }
 
             if (full)
-                for (int y = 0; y < GridDataSystem.Size; y++)
-                    this.grid.ClearCell(new Vector2Int(x, y));
+            {
+                for (int x = 0; x < GridDataSystem.Size; x++)
+                    cellsToClear.Add(new Vector2Int(x, y));
+            }
         }
-    }
 
-    private void ClearRow()
-    {
-        for (int y = 0; y < GridDataSystem.Size; y++)
+        // ===== SCAN COLUMN =====
+        for (int x = 0; x < GridDataSystem.Size; x++)
         {
             bool full = true;
-            for (int x = 0; x < GridDataSystem.Size; x++)
-                if (!this.grid.IsOccupied(new Vector2Int(x, y)))
+            for (int y = 0; y < GridDataSystem.Size; y++)
+            {
+                if (!grid.IsOccupied(new Vector2Int(x, y)))
+                {
                     full = false;
+                    break;
+                }
+            }
 
             if (full)
-                for (int x = 0; x < GridDataSystem.Size; x++)
-                    this.grid.ClearCell(new Vector2Int(x, y));
+            {
+                for (int y = 0; y < GridDataSystem.Size; y++)
+                    cellsToClear.Add(new Vector2Int(x, y));
+            }
         }
+
+        // ===== CLEAR ALL AT ONCE =====
+        foreach (var cell in cellsToClear)
+            grid.ClearCell(cell);
     }
+
 
     private void SpawnGhost(Vector2Int cell, Sprite sprite, BrickObj.BrickType type)
     {
@@ -203,5 +218,95 @@ public class GridPlacementLogic : BlockPlacementLogic
         for (int y = 0; y < GridDataSystem.Size; y++)
             yield return new Vector2Int(x, y);
     }
+    
+    public bool CanPlaceShapeAnywhere(BlockShape shape)
+    {
+        foreach (var origin in GetAllGridCells())
+        {
+            if (CanPlaceShapeAt(shape, origin))
+                return true;
+        }
+
+        return false;
+    }
+    
+    private bool CanPlaceShapeAt(BlockShape shape, Vector2Int origin)
+    {
+        foreach (var offset in shape.Cells)
+        {
+            Vector2Int cell = origin + offset;
+
+            if (!grid.IsInside(cell))
+                return false;
+
+            if (grid.IsOccupied(cell))
+                return false;
+        }
+
+        return true;
+    }
+    
+    public bool CanClearLineAnywhere(BlockShape shape)
+    {
+        foreach (var origin in GetAllGridCells())
+        {
+            if (!CanPlaceShapeAt(shape, origin))
+                continue;
+
+            if (WillClearLine(shape, origin))
+                return true;
+        }
+
+        return false;
+    }
+    
+    private bool WillClearLine(BlockShape shape, Vector2Int origin)
+    {
+        HashSet<Vector2Int> tempOccupied = new();
+
+        for (int x = 0; x < GridDataSystem.Size; x++)
+        for (int y = 0; y < GridDataSystem.Size; y++)
+            if (grid.IsOccupied(new Vector2Int(x, y)))
+                tempOccupied.Add(new Vector2Int(x, y));
+
+        foreach (var offset in shape.Cells)
+            tempOccupied.Add(origin + offset);
+
+        // check row
+        for (int y = 0; y < GridDataSystem.Size; y++)
+        {
+            bool full = true;
+            for (int x = 0; x < GridDataSystem.Size; x++)
+            {
+                if (!tempOccupied.Contains(new Vector2Int(x, y)))
+                {
+                    full = false;
+                    break;
+                }
+            }
+            if (full) return true;
+        }
+
+        // check column
+        for (int x = 0; x < GridDataSystem.Size; x++)
+        {
+            bool full = true;
+            for (int y = 0; y < GridDataSystem.Size; y++)
+            {
+                if (!tempOccupied.Contains(new Vector2Int(x, y)))
+                {
+                    full = false;
+                    break;
+                }
+            }
+            if (full) return true;
+        }
+
+        return false;
+    }
+
+
+
+
 
 }

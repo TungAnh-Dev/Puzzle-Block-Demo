@@ -30,6 +30,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
         resetBlock                     =  0;
         blockDragHandler.OnBlockPlaced += OnBlockPlacedHandle;
         blockSystem.Generate3Blocks();
@@ -48,6 +49,7 @@ public class LevelManager : MonoBehaviour
             resetBlock = 0;
             Debug.Log("Lose");
             //TODO:Show UI -> Replay
+            UIManager.Instance.OpenUI<UIReplay>().OnReplayButtonClicked += Replay;
             return;
         }
         if (resetBlock >= MAX_BLOCKS)
@@ -69,6 +71,12 @@ public class LevelManager : MonoBehaviour
         }
 
         return true; 
+    }
+
+    [Button]
+    public void Test()
+    {
+        UIManager.Instance.OpenUI<UIReplay>().OnReplayButtonClicked += Replay;
     }
     
     [Button]

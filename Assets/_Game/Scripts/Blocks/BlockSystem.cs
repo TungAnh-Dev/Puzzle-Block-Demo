@@ -12,7 +12,8 @@ public class BlockSystem : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private BlockShapeSO blockShapeSO;
-    [SerializeField] private BlockThemeSO blockThemeSO;
+    [SerializeField] private BlockThemeSO     blockThemeSO;
+    [SerializeField] private BlockRandomLogic blockRandomLogic;
 
     [Header("Spawn Points (size = 3)")]
     [SerializeField] private BlockSpawnPoint[] spawnPoints;
@@ -58,13 +59,19 @@ public class BlockSystem : MonoBehaviour
     {
         int count = spawnPoints.Length;
 
-        if (blockThemeSO.Sprites.Count < count)
+        if (this.blockRandomLogic == null)
         {
-            Debug.LogError("BlockSystem: Not enough themes");
+            Debug.LogError("BlockSystem: Missing BlockRandomStrategy");
             return;
         }
 
-        List<int> themeIds = PickDistinctThemeIds(count);
+        this.blockRandomLogic.Generate(
+            count,
+            blockShapeSO,
+            blockThemeSO,
+            out var shapes,
+            out var themeIds
+        );
 
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -72,17 +79,17 @@ public class BlockSystem : MonoBehaviour
             if (point == null || point.HasBlock)
                 continue;
 
-            var shape = blockShapeSO.Shapes[
-                Random.Range(0, blockShapeSO.Shapes.Count)
-            ];
+            var block = SpawnBlock(
+                shapes[i],
+                themeIds[i],
+                point.transform
+            );
 
-            int themeId = themeIds[i];
-
-            var block = SpawnBlock(shape, themeId, point.transform);
             point.Attach(block);
             blockList.Add(block);
         }
     }
+
 
     private BlockObj SpawnBlock(BlockShape shape, int themeId, Transform parent)
     {
