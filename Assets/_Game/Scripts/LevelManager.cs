@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -6,20 +8,24 @@ public class LevelManager : MonoBehaviour
     public const int MAX_BLOCKS = 3;
     
     [Header("Ref")]
-    [SerializeField] private GridSystem gridSystem;
-    [SerializeField] private BlockSystem blockSystem;
-    [SerializeField] private BlockDragHandler blockDragHandler;
+    [SerializeField] private GridDataSystem gridDataSystem;
+    [SerializeField] private BlockSystem         blockSystem;
+    [SerializeField] private BlockDragHandler    blockDragHandler;
+    [SerializeField] private BlockPlacementLogic placementLogic;
     
     [SerializeField] private int resetBlock = 0;
     
-    public GridSystem GridSystem { get => gridSystem;}
-    public BlockSystem BlockSystem { get => blockSystem;}
+    public GridDataSystem GridDataSystem { get => this.gridDataSystem;}
+    public BlockSystem    BlockSystem    { get => blockSystem;}
+
+    public event Action OnReplayLevel;
 
     private void Reset()
     {
-        gridSystem = GetComponentInChildren<GridSystem>();
-        blockSystem = GetComponentInChildren<BlockSystem>();
+        this.gridDataSystem       = GetComponentInChildren<GridDataSystem>();
+        blockSystem      = GetComponentInChildren<BlockSystem>();
         blockDragHandler = GetComponentInChildren<BlockDragHandler>();
+        placementLogic = GetComponentInChildren<BlockPlacementLogic>();
     }
 
     private void Awake()
@@ -37,10 +43,40 @@ public class LevelManager : MonoBehaviour
     private void OnBlockPlacedHandle()
     {
         resetBlock++;
+        if (IsLose(blockSystem.BlockList))
+        {
+            resetBlock = 0;
+            Debug.Log("Lose");
+            //TODO:Show UI -> Replay
+            return;
+        }
         if (resetBlock >= MAX_BLOCKS)
         {
             resetBlock = 0;
             blockSystem.Generate3Blocks();
         }
+    }
+    
+    public bool IsLose(List<BlockObj> blocks)
+    {
+        if (blocks == null || blocks.Count == 0)
+            return false;
+
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            if (placementLogic.CanPlaceBlockAnywhere(blocks[i]))
+                return false;
+        }
+
+        return true; 
+    }
+    
+    [Button]
+    public void Replay()
+    {
+        resetBlock = 0;
+        gridDataSystem.ClearAllData();
+        blockSystem.Generate3Blocks();
+        OnReplayLevel?.Invoke();
     }
 }

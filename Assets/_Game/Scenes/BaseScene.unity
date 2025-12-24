@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &85016501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 85016502}
+  m_Layer: 0
+  m_Name: BrickHolder (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &85016502
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85016501}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1514037661}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &167333802
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   liftOffset: {x: 0, y: 1, z: 0}
-  grid: {fileID: 1824796443}
+  grid: {fileID: 1514037662}
 --- !u!1 &363028533
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,7 +226,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1824796442}
+  - {fileID: 1303668149}
+  - {fileID: 1514037661}
   - {fileID: 939994758}
   - {fileID: 167333803}
   - {fileID: 697737512}
@@ -213,9 +245,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23445a5c0e4b3df4dbb6acccef786bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSystem: {fileID: 1824796443}
+  gridDataSystem: {fileID: 1303668148}
   blockSystem: {fileID: 939994759}
   blockDragHandler: {fileID: 167333804}
+  placementLogic: {fileID: 1514037662}
   resetBlock: 0
 --- !u!4 &465200059 stripped
 Transform:
@@ -601,7 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3330fadb8b2640e4494af0db36500009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSystem: {fileID: 1824796443}
+  levelManager: {fileID: 363028535}
   dragHandler: {fileID: 167333804}
   brickDebugPrefab: {fileID: -4366459812621628152, guid: 1ca185ea2268389489816ea9f81dd6f3, type: 3}
 --- !u!1 &939994757
@@ -660,6 +693,7 @@ MonoBehaviour:
   - {fileID: 1049698758}
   - {fileID: 465200061}
   cellSize: 0.5
+  blockList: []
 --- !u!4 &1049698755 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9148032636402445970, guid: 57a8addbce6de574aa0cc9fe634e5688, type: 3}
@@ -763,7 +797,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1302444993
+--- !u!1 &1303668147
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -771,28 +805,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1302444994}
+  - component: {fileID: 1303668149}
+  - component: {fileID: 1303668148}
   m_Layer: 0
-  m_Name: BrickPreviewHolder
+  m_Name: GridDataSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1302444994
+--- !u!114 &1303668148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303668147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd0356bad92668428be6a920e6208ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  origin: {x: -2.01, y: -1.37}
+  cellSize: 0.5
+--- !u!4 &1303668149
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302444993}
+  m_GameObject: {fileID: 1303668147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1824796442}
+  m_Father: {fileID: 363028534}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1445918283
 GameObject:
@@ -881,6 +930,89 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1505992739
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1505992740}
+  m_Layer: 0
+  m_Name: BrickPreviewHolder (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1505992740
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505992739}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1514037661}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1514037660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1514037661}
+  - component: {fileID: 1514037662}
+  m_Layer: 0
+  m_Name: 'GridPlacementLogic '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1514037661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514037660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 85016502}
+  - {fileID: 1505992740}
+  m_Father: {fileID: 363028534}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1514037662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514037660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17d39693d2f60654a8efc1fed94fa213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1303668148}
+  blockThemeSO: {fileID: 11400000, guid: 40ce3879fc10e254f8153d9ec3f27dc6, type: 2}
+  ghostBrickPrefab: {fileID: -5142254294547532757, guid: 72fcc7a71460c66428919fb135dffa7e, type: 3}
+  gridBrickPrefab: {fileID: 2994670887282314558, guid: 4867ab9208ea602499dc68540b59b0d3, type: 3}
+  brickHolder: {fileID: 85016502}
+  previewHolder: {fileID: 1505992740}
 --- !u!1001 &1650110185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -938,37 +1070,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57a8addbce6de574aa0cc9fe634e5688, type: 3}
---- !u!1 &1680491582
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1680491583}
-  m_Layer: 0
-  m_Name: BrickHolder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1680491583
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1680491582}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1824796442}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1747541788
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1026,60 +1127,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57a8addbce6de574aa0cc9fe634e5688, type: 3}
---- !u!1 &1824796441
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1824796442}
-  - component: {fileID: 1824796443}
-  m_Layer: 0
-  m_Name: GridSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1824796442
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1824796441}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1680491583}
-  - {fileID: 1302444994}
-  m_Father: {fileID: 363028534}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1824796443
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1824796441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a28615db04de73e4eb971a1b79e17695, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blockThemeSO: {fileID: 11400000, guid: 40ce3879fc10e254f8153d9ec3f27dc6, type: 2}
-  ghostBrickPrefab: {fileID: -5142254294547532757, guid: 72fcc7a71460c66428919fb135dffa7e, type: 3}
-  gridBrickPrefab: {fileID: 2994670887282314558, guid: 4867ab9208ea602499dc68540b59b0d3, type: 3}
-  brickHolder: {fileID: 1680491583}
-  brickPreviewHolder: {fileID: 1302444994}
-  origin: {x: -2.01, y: -1.37}
-  cellSize: 0.5
-  drawGizmos: 1
 --- !u!1001 &561385572985895058
 PrefabInstance:
   m_ObjectHideFlags: 0

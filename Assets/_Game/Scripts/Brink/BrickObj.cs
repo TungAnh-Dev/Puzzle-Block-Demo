@@ -4,6 +4,8 @@ public class BrickObj : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     
+    public Vector2Int GridOffset;
+    
     public enum BrickType
     {
         Free,

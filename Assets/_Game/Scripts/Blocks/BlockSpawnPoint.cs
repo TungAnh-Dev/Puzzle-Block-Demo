@@ -9,6 +9,8 @@ public class BlockSpawnPoint : MonoBehaviour
     public BlockObj CurrentBlock => currentBlock;
 
     public bool HasBlock => currentBlock != null;
+    
+    public event Action<BlockObj> OnDetachBlock;
 
     private void Reset()
     {
@@ -31,6 +33,8 @@ public class BlockSpawnPoint : MonoBehaviour
     public BlockObj Detach()
     {
         var block = currentBlock;
+        if(block != null)
+            OnDetachBlock?.Invoke(block);
         currentBlock = null;
         return block;
     }

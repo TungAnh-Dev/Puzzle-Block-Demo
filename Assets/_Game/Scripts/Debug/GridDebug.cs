@@ -3,7 +3,7 @@ using UnityEngine;
 public class GridDebug : MonoBehaviour
 {
     [Header("Refs")]
-    [SerializeField] private GridSystem gridSystem;
+    [SerializeField] private LevelManager levelManager;
     [SerializeField] private BlockDragHandler dragHandler;
 
     [Header("Debug Prefab")]
@@ -13,15 +13,16 @@ public class GridDebug : MonoBehaviour
 
     private void Awake()
     {
-        if (gridSystem == null)
+        if (this.levelManager == null)
         {
             Debug.LogError("[GridDebug] Missing GridSystem");
             enabled = false;
             return;
         }
 
-        debugBricks = new BrickDebug[GridSystem.Size, GridSystem.Size];
+        debugBricks = new BrickDebug[GridDataSystem.Size, GridDataSystem.Size];
         CreateDebugGrid();
+        levelManager.OnReplayLevel += Refresh;
     }
 
     private void OnEnable()
@@ -40,11 +41,11 @@ public class GridDebug : MonoBehaviour
 
     private void CreateDebugGrid()
     {
-        for (int x = 0; x < GridSystem.Size; x++)
+        for (int x = 0; x < GridDataSystem.Size; x++)
         {
-            for (int y = 0; y < GridSystem.Size; y++)
+            for (int y = 0; y < GridDataSystem.Size; y++)
             {
-                Vector3 pos = gridSystem.GridToWorld(new Vector2Int(x, y));
+                Vector3 pos = this.levelManager.GridDataSystem.GridToWorld(new Vector2Int(x, y));
 
                 BrickDebug brick = Instantiate(
                     brickDebugPrefab,
@@ -65,11 +66,11 @@ public class GridDebug : MonoBehaviour
 
     private void Refresh()
     {
-        for (int x = 0; x < GridSystem.Size; x++)
+        for (int x = 0; x < GridDataSystem.Size; x++)
         {
-            for (int y = 0; y < GridSystem.Size; y++)
+            for (int y = 0; y < GridDataSystem.Size; y++)
             {
-                bool occupied = gridSystem.IsOccupied(new Vector2Int(x, y));
+                bool occupied = this.levelManager.GridDataSystem.IsOccupied(new Vector2Int(x, y));
 
                 debugBricks[x, y].SetBrickDebugType(
                     occupied

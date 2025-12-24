@@ -13,7 +13,7 @@ public class BlockDragHandler : MonoBehaviour
     private BlockSpawnPoint fromPoint;
     private Vector3         dragOffset;
 
-    [SerializeField] GridSystem grid;
+    [SerializeField] BlockPlacementLogic grid;
     
     public event Action OnBlockPlaced;
 

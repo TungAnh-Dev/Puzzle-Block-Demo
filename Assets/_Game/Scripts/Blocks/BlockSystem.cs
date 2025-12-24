@@ -19,6 +19,31 @@ public class BlockSystem : MonoBehaviour
 
     [Header("Brick")]
     [SerializeField] private float cellSize = 1f;
+    [SerializeField] private List<BlockObj> blockList = new List<BlockObj>();
+    
+    public List<BlockObj> BlockList => blockList;
+
+    private void Awake()
+    {
+        foreach (var spawnPoint in spawnPoints)
+        {
+            spawnPoint.OnDetachBlock += OnDetachBlockHandle;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var spawnPoint in spawnPoints)
+        {
+            spawnPoint.OnDetachBlock -= OnDetachBlockHandle;
+        }
+    }
+
+    private void OnDetachBlockHandle(BlockObj obj)
+    {
+        if(blockList.Contains(obj))
+            blockList.Remove(obj);
+    }
 
     [Button("Generate 3 Blocks")]
     public void Generate3Blocks()
@@ -55,6 +80,7 @@ public class BlockSystem : MonoBehaviour
 
             var block = SpawnBlock(shape, themeId, point.transform);
             point.Attach(block);
+            blockList.Add(block);
         }
     }
 
@@ -78,6 +104,8 @@ public class BlockSystem : MonoBehaviour
             var brick = LazyPooling.Instant.getObj(brickPrefab);
             brick.gameObject.SetActive(true);
             brick.transform.SetParent(block.transform);
+            
+            brick.GridOffset = cell;
 
             brick.transform.localPosition =
                 new Vector3(
